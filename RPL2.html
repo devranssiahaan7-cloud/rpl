@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Pemandian Alam Tanduk Benua + UML Lengkap | Sistem Wisata</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --forest-deep: #0d2b1a;
+            --forest-mid: #1e5631;
+            --forest-light: #4c9a2a;
+            --forest-pale: #a8d5a2;
+            --gold: #f9b81b;
+            --gold-light: #fdeea0;
+            --cream: #faf7f4;
+            --stone: #e8e2da;
+            --text: #1a2e1e;
+            --muted: #5a7a62;
+            --uml-bg: #f8f7f4;
+            --uml-surface: #ffffff;
+            --uml-ink: #0f1117;
+            --uml-ink2: #3d4256;
+            --uml-border: #e2e0da;
+            --uml-blue-bg: #e8f0ff;
+            --uml-blue-text: #1a3a9c;
+            --uml-teal-bg: #e0f5ef;
+            --uml-teal-text: #0b5e47;
+            --uml-amber-bg: #fef3d8;
+            --uml-amber-text: #7a4500;
+            --uml-purple-bg: #eeebff;
+            --uml-purple-text: #3b2e9c;
+            --uml-coral-bg: #fceee9;
+            --uml-coral-text: #8a2a12;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--text);
+            scroll-behavior: smooth;
+        }
+
+        /* ========== AUTH OVERLAY ========== */
+        #authOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(13, 43, 26, 0.95);
+            backdrop-filter: blur(12px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(0); opacity: 0.6; }
+            100% { transform: scale(4); opacity: 0; }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .auth-card {
+            background: white;
+            border-radius: 28px;
+            padding: 2.5rem 2rem;
+            width: 90%;
+            max-width: 440px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.4);
+            animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--forest-mid), var(--gold), var(--forest-light));
+            border-radius: 28px 28px 0 0;
+        }
+
+        .auth-brand {
+            text-align: center;
+            margin-bottom: 1.8rem;
+        }
+
+        .auth-brand .icon {
+            font-size: 2.8rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-brand h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            color: var(--forest-deep);
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: var(--stone);
+            border-radius: 50px;
+            padding: 4px;
+            margin-bottom: 1.8rem;
+            gap: 4px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 0.6rem;
+            border: none;
+            border-radius: 46px;
+            cursor: pointer;
+            font-weight: 600;
+            background: transparent;
+            color: var(--muted);
+            transition: 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .auth-tab.active {
+            background: var(--forest-mid);
+            color: white;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px 12px 40px;
+            border: 2px solid var(--stone);
+            border-radius: 50px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            background: #fafafa;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: var(--forest-light);
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap .icon-left {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .btn-auth {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: 0.2s;
+        }
+
+        .btn-auth:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-visitor {
+            background: linear-gradient(135deg, var(--forest-mid), var(--forest-light));
+            color: white;
+        }
+
+        .btn-admin {
+            background: linear-gradient(135deg, var(--forest-deep), #2c5f3a);
+            color: white;
+        }
+
+        .guest-link {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .guest-link a {
+            color: var(--forest-mid);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .admin-hint {
+            background: var(--gold-light);
+            border: 1px solid #e8c85a;
+            border-radius: 12px;
+            padding: 0.7rem 1rem;
+            font-size: 0.8rem;
+            color: #6b5000;
+            margin-bottom: 1.2rem;
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        /* ========== USER BADGE ========== */
+        #userBadge {
+            display: none;
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 500;
+            background: white;
+            border-radius: 50px;
+            padding: 6px 16px 6px 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* ========== HEADER ========== */
+        header {
+            background: linear-gradient(135deg, #1e5631, #4c9a2a);
+            color: white;
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+        }
+
+        .logo p {
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            border-bottom: 2px solid var(--gold);
+            color: #f9e45b;
+        }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 5px 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            color: white;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        /* ========== HERO ========== */
+        .hero {
+            background: linear-gradient(135deg, #1e3c2c 0%, #2c5e3a 100%);
+            height: 50vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-text h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-text p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 1.8rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            border-left: 8px solid var(--gold);
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+            color: var(--forest-mid);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .info-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .info-list li {
+            margin: 0.8rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .info-list li::before {
+            content: "🌿";
+            position: absolute;
+            left: 0;
+        }
+
+        .gallery {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .gallery img {
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 20px;
+            transition: 0.3s;
+        }
+
+        .gallery img:hover {
+            transform: scale(1.03);
+        }
+
+        .btn-primary {
+            background: var(--forest-mid);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 40px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            transition: 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #1b4d3e;
+        }
+
+        /* ========== COMMENT SECTION ========== */
+        .comment-item {
+            background: #e9f5e9;
+            padding: 14px;
+            border-radius: 20px;
+            margin: 12px 0;
+            position: relative;
+        }
+
+        .comment-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--forest-mid);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.75rem;
+        }
+
+        .btn-delete {
+            background: #c0392b;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            position: absolute;
+            right: 14px;
+            top: 14px;
+        }
+
+        .btn-delete:hover {
+            background: #922b21;
+        }
+
+        .login-to-comment {
+            background: linear-gradient(135deg, #e8f5e1, #f0faf0);
+            border: 2px dashed var(--forest-pale);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        /* ========== ADMIN PANEL ========== */
+        #adminSection {
+            display: none;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #1a0a00, #3d1c00);
+            padding: 1rem;
+            border-radius: 20px;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-box {
+            background: var(--stone);
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-box .num {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--forest-mid);
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* ========== UML SECTION ========== */
+        .uml-section {
+            display: none;
+            background: var(--uml-bg);
+            border-radius: 28px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border: 1px solid var(--uml-border);
+        }
+
+        .uml-tab-bar {
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--uml-border);
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .uml-tab {
+            background: none;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            color: var(--muted);
+            transition: 0.2s;
+        }
+
+        .uml-tab.active {
+            color: #1a3a9c;
+            border-bottom: 3px solid #1a3a9c;
+            margin-bottom: -2px;
+        }
+
+        .uml-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .uml-content.active {
+            display: block;
+        }
+
+        .uml-table-wrap {
+            background: var(--uml-surface);
+            border-radius: 16px;
+            overflow-x: auto;
+            border: 1px solid var(--uml-border);
+        }
+
+        .uml-table-wrap table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .uml-table-wrap th {
+            background: var(--forest-deep);
+            color: rgba(255, 255, 255, 0.85);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            padding: 10px 14px;
+            text-align: left;
+        }
+
+        .uml-table-wrap td {
+            padding: 11px 14px;
+            font-size: 0.85rem;
+            border-bottom: 1px solid var(--uml-border);
+            vertical-align: top;
+            color: var(--uml-ink2);
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 4px;
+            border: 1px solid transparent;
+        }
+
+        .pill::before {
+            content: '';
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .pill-teal {
+            background: var(--uml-teal-bg);
+            color: var(--uml-teal-text);
+            border-color: #8fd4be;
+        }
+        .pill-teal::before { background: var(--uml-teal-text); }
+
+        .pill-blue {
+            background: var(--uml-blue-bg);
+            color: var(--uml-blue-text);
+            border-color: #a8bfee;
+        }
+        .pill-blue::before { background: var(--uml-blue-text); }
+
+        .pill-amber {
+            background: var(--uml-amber-bg);
+            color: var(--uml-amber-text);
+            border-color: #f5ca6e;
+        }
+        .pill-amber::before { background: var(--uml-amber-text); }
+
+        .pill-purple {
+            background: var(--uml-purple-bg);
+            color: var(--uml-purple-text);
+            border-color: #b5acf0;
+        }
+        .pill-purple::before { background: var(--uml-purple-text); }
+
+        .pill-coral {
+            background: var(--uml-coral-bg);
+            color: var(--uml-coral-text);
+            border-color: #f0aa8a;
+        }
+        .pill-coral::before { background: var(--uml-coral-text); }
+
+        .rel-type {
+            display: inline-block;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.68rem;
+            padding: 2px 7px;
+            border-radius: 3px;
+            background: var(--uml-amber-bg);
+            color: var(--uml-amber-text);
+            border: 1px solid #f5ca6e;
+            font-weight: 700;
+        }
+
+        .attr-block {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            line-height: 1.9;
+        }
+
+        .attr-type {
+            color: var(--uml-blue-text);
+        }
+
+        .method-block {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            line-height: 1.9;
+            color: var(--uml-teal-text);
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 1rem;
+            padding: 0.8rem 1.2rem;
+            background: var(--uml-surface);
+            border-radius: 12px;
+            border: 1px solid var(--uml-border);
+        }
+
+        .legend-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            align-self: center;
+        }
+
+        footer {
+            background: #0f2c1f;
+            color: #cfdfc5;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .hero-text h2 {
+                font-size: 1.8rem;
+            }
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .nav-links {
+                gap: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- AUTH OVERLAY -->
+<div id="authOverlay">
+    <div class="auth-card">
+        <div class="auth-brand">
+            <span class="icon">🏞️</span>
+            <h2>Tanduk Benua</h2>
+            <p>Pemandian Alam · Sumatra Utara</p>
+        </div>
+        <div class="auth-tabs">
+            <button class="auth-tab active" id="tabVisitor" onclick="switchTab('visitor')">🌿 Pengunjung</button>
+            <button class="auth-tab" id="tabAdmin" onclick="switchTab('admin')">🔐 Admin</button>
+        </div>
+        <div class="auth-form active" id="formVisitor">
+            <div class="form-group">
+                <div class="input-wrap">
+                    <span class="icon-left">👤</span>
+                    <input type="text" id="vName" placeholder="Nama lengkap">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-wrap">
+                    <span class="icon-left">📍</span>
+                    <input type="text" id="vCity" placeholder="Asal kota">
+                </div>
+            </div>
+            <button class="btn-auth btn-visitor" onclick="loginVisitor()">Masuk sebagai Pengunjung 🌿</button>
+            <div class="guest-link">
+                <a onclick="loginGuest()">Lanjut sebagai Tamu</a>
+            </div>
+        </div>
+        <div class="auth-form" id="formAdmin">
+            <div class="admin-hint">
+                <span>💡</span>
+                <span>Gunakan username <b>admin</b> dan password <b>admin123</b> untuk demo.</span>
+            </div>
+            <div class="form-group">
+                <div class="input-wrap">
+                    <span class="icon-left">🔑</span>
+                    <input type="text" id="aUser" placeholder="Username">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-wrap">
+                    <span class="icon-left">🔒</span>
+                    <input type="password" id="aPass" placeholder="Password">
+                </div>
+            </div>
+            <button class="btn-auth btn-admin" onclick="loginAdmin()">Masuk sebagai Admin 🔐</button>
+        </div>
+    </div>
+</div>
+
+<!-- USER BADGE -->
+<div id="userBadge">
+    <div class="badge-avatar" id="badgeAvatar"></div>
+    <span id="badgeName"></span>
+</div>
+
+<!-- HEADER -->
+<header>
+    <nav>
+        <div class="logo">
+            <h1>🏞️ Tanduk Benua</h1>
+            <p>Karo - Sumatra Utara</p>
+        </div>
+        <ul class="nav-links">
+            <li><a onclick="scrollToSection('home')">Beranda</a></li>
+            <li><a onclick="scrollToSection('tentang')">Tentang</a></li>
+            <li><a onclick="scrollToSection('galeri')">Galeri</a></li>
+            <li><a onclick="scrollToSection('peta')">Peta</a></li>
+            <li><a onclick="scrollToSection('komentar')">Komentar</a></li>
+            <li id="adminNavItem" style="display:none;"><a onclick="showAdminPanel()">⚙️ Admin</a></li>
+            <li><a id="umlNavBtn" style="background: rgba(0,0,0,0.2); padding: 5px 14px; border-radius: 60px; cursor: pointer;">📐 UML</a></li>
+            <li><button class="btn-logout" onclick="logout()">Keluar</button></li>
+        </ul>
+    </nav>
+</header>
+
+<!-- HERO -->
+<section id="home" class="hero">
+    <div class="hero-text">
+        <h2>Pemandian Alam Tanduk Benua</h2>
+        <p>Air terjun alami dengan bebatuan tanduk | Udara sejuk khas Tanah Karo</p>
+    </div>
+</section>
+
+<div class="container">
+    <!-- TENTANG -->
+    <section id="tentang" class="card">
+        <h2>🌱 Tentang & Potensi Lokal</h2>
+        <div class="grid-2">
+            <div>
+                <p>Pemandian alam Tanduk Benua di Kecamatan Kutalimbaru, Kabupaten Deli Serdang, Sumatera Utara menawarkan keindahan alam yang masih asri dengan suasana yang sejuk dan menenangkan. Air yang tenang dan kedalaman yang rendah membuat tempat ini cocok untuk dijadikan pilihan destinasi keluarga.</p>
+                <ul class="info-list">
+                    <li>📍 Ujung Deleng, Kec. Sibolangit, Kabupaten Deli Serdang, Sumatera Utara</li>
+                    <li>💧 Tiket masuk: Rp10.000</li>
+                    <li>🏕️ Fasilitas: area camping, gazebo, warung makan lokal</li>
+                    <li>🌿 Potensi ekowisata & edukasi konservasi</li>
+                </ul>
+            </div>
+            <div>
+                <img src="Aset/Healing-Seru-3812282158.webp" width="100%" style="border-radius: 20px;" alt="Tanduk Benua">
+            </div>
+        </div>
+    </section>
+
+    <!-- ALASAN KURANG TERJANGKAU -->
+    <section class="card">
+        <h2>🚧 Alasan Kurang Terjangkaunya Destinasi ini</h2>
+        <div>
+            <p><b>Jalan yang Ekstrem:</b> Medan menuju lokasi dipenuhi bebatuan, tanjakan ekstrem, turunan tajam, dan di musim hujan berubah menjadi jalur lumpur licin.</p>
+            <p><b>Promosi yang Minim:</b> Baru pada tahun 2023, pihak kampus (FISIP USU) bersama pemerintah desa mengadakan pelatihan untuk meningkatkan promosi destinasi ini.</p>
+            <p><b>Pengelolaan yang Baru Dimatangkan:</b> Dulu lokasi ini dikenal dengan nama Pemandian Siguang-Guang. Kini mulai dikelola ulang.</p>
+        </div>
+    </section>
+
+    <!-- GALERI -->
+    <section id="galeri" class="card">
+        <h2>📸 Galeri Alam Tanduk Benua</h2>
+        <div class="gallery">
+            <img src="Aset/gambar.jpeg" alt="Galeri 1">
+            <img src="Aset/WhatsApp Image 2026-04-14 at 21.44.16.jpeg" alt="Galeri 2">
+            <img src="Aset/e.jpeg" alt="Galeri 3">
+            <img src="Aset/WhatsApp Image 2026-04-14 at 21.47.38.jpeg" alt="Galeri 4">
+        </div>
+    </section>
+
+    <!-- PETA -->
+    <section id="peta" class="card">
+        <h2>🗺️ Lokasi & Peta</h2>
+        <p style="margin-bottom: 1rem;">Alamat: Ujung Deleng, Kec. Sibolangit, Kabupaten Deli Serdang, Sumatera Utara</p>
+        <iframe width="100%" height="350" style="border-radius: 24px; border: 0;" loading="lazy"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12959.07601957314!2d98.5184702248622!3d3.333628687150611!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30311f00126bc3bd%3A0x8f49c66c2128a249!2sPemandian%20Alam%20Tanduk%20benua!5e0!3m2!1sid!2sid!4v1776174893420!5m2!1sid!2sid">
+        </iframe>
+    </section>
+
+    <!-- KOMENTAR -->
+    <section id="komentar" class="card">
+        <h2>💬 Komentar Pengunjung</h2>
+        <div id="commentsList"></div>
+        <div id="commentFormWrap">
+            <div id="loginPrompt" class="login-to-comment" style="display: none;">
+                <p>🌿 <a onclick="showAuthOverlayManual()" style="color: var(--forest-mid); font-weight: 700; cursor: pointer;">Login sebagai pengunjung</a> untuk meninggalkan komentar.</p>
+            </div>
+            <div id="actualCommentForm" style="display: none;">
+                <hr style="border: none; border-top: 2px solid #e8f0e8; margin: 1.2rem 0;">
+                <p style="font-weight: 600; margin-bottom: 0.8rem; color: var(--forest-mid);">Tulis Komentar</p>
+                <input type="text" id="commentName" readonly style="width: 100%; padding: 10px; border-radius: 30px; border: 2px solid var(--stone); background: #f0f7f0; margin-bottom: 10px;">
+                <textarea id="commentMsg" rows="3" placeholder="Tulis pesan & kesan tentang Tanduk Benua..." style="width: 100%; padding: 12px; border-radius: 20px; border: 2px solid var(--stone); font-family: 'DM Sans', sans-serif;"></textarea>
+                <button class="btn-primary" onclick="submitComment()" style="margin-top: 10px;">Kirim Komentar 🌿</button>
+            </div>
+        </div>
+    </section>
+
+    
+<section id="peta" class="card">
+    <h2> Gambar UML</h2>
+    <p style="margin-bottom:1rem;">USE CASE DIAGRAM </p>
+    <div>
+        <img src="Aset/UseCASE.png" width="100%" style="border-radius:20px;">
+    </div>
+</section>
+
+<section id="peta" class="card">
+    <h2> Gambar UML</h2>
+    <p style="margin-bottom:1rem;">ACTIVITY DIAGRAM Pengunjung Menulis Komentar </p>
+    <div>
+        <img src="Aset/ActivityDiagram1.png" width="100%" style="border-radius:20px;">
+    </div>
+</section>
+
+<section id="peta" class="card">
+    <h2> Gambar UML</h2>
+    <p style="margin-bottom:1rem;">ACTIVITY DIAGRAM Admin Menghapus Komentar </p>
+    <div>
+        <img src="Aset/ActivityDiagram2.png" width="100%" style="border-radius:20px;">
+    </div>
+</section>
+
+<section id="peta" class="card">
+    <h2> Gambar UML</h2>
+    <p style="margin-bottom:1rem;">Sistem Wisata Alam Tanduk Benua </p>
+    <div> 
+        <img src="Aset/ClassDiagram.png" width="100%" style="border-radius:20px;">
+    </div>
+</section>
+
+<section id="sequence" class="card">
+    <h2>📊 SEQUENCE DIAGRAM</h2>
+    <p style="margin-bottom:1rem;">Alur Pengunjung Mengirim Komentar (Form Kontak)</p>
+    <div style="background: #f8f7f4; padding: 1rem; border-radius: 20px; overflow-x: auto;">
+        <img src="Aset/SequenceDiagram.png" alt="Diagram">
+    </div>
+    <div class="legend" style="margin-top: 1rem;">
+        <span class="legend-label">Keterangan:</span>
+        <span class="pill pill-blue">→ Pesan sinkron</span>
+        <span class="pill pill-teal">-> Return/balasan</span>
+        <span class="pill pill-amber">Self-call (proses internal)</span>
+        <span class="pill pill-purple">Alt = percabangan kondisi</span>
+    </div>
+    <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--muted);"><strong>Penjelasan:</strong> Diagram di atas menggambarkan interaksi pengunjung yang sudah login saat mengirim komentar. Pengunjung mengisi pesan, sistem memvalidasi, lalu menyimpan ke localStorage. Setelah berhasil, form di-reset dan komentar baru ditampilkan.</p>
+</section>
+
+<!-- ========== IDENTITAS MAHASISWA & LINK (LANGSUNG MUNCUL) ========== -->
+<section class="card" id="identitas" style="background: linear-gradient(135deg, #e8f5e9, #c8e6d9);">
+    <h2>📋 IDENTITAS MAHASISWA & LINK PENGUMPULAN</h2>
+    
+    <div style="background: white; border-radius: 16px; padding: 1.5rem; margin-bottom: 1rem;">
+        <div class="grid-2">
+            <div>
+                <p><strong>👤 Nama Lengkap</strong><br>
+                <span id="displayName" style="font-size: 1.1rem; font-weight: 500;">[ISI NAMA ANDA]</span>
+                <button onclick="editName()" style="background: none; border: none; color: var(--forest-mid); cursor: pointer; margin-left: 8px;">✏️ Edit</button></p>
+            </div>
+            <div>
+                <p><strong>🆔 NIM</strong><br>
+                <span id="displayNim" style="font-size: 1.1rem; font-weight: 500;">[ISI NIM ANDA]</span>
+                <button onclick="editNim()" style="background: none; border: none; color: var(--forest-mid); cursor: pointer; margin-left: 8px;">✏️ Edit</button></p>
+            </div>
+        </div>
+        <p><strong>📚 Kelas:</strong> II / 2 Pagi A</p>
+    </div>
+    
+    <div style="background: white; border-radius: 16px; padding: 1.5rem;">
+        <h3 style="margin-bottom: 1rem;">🔗 LINK WAJIB PENGUMPULAN</h3>
+        
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 12px 0; width: 35%;"><strong>🎬 Video Presentasi</strong></td>
+                <td style="padding: 12px 0;"><span id="ytLinkDisplay">-</span></td>
+                <td style="padding: 12px 0; width: 80px;"><button onclick="editYtLink()" style="background: var(--forest-mid); color: white; border: none; padding: 5px 12px; border-radius: 20px; cursor: pointer;">Edit</button></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 12px 0;"><strong>📄 PDF Dokumentasi</strong></td>
+                <td style="padding: 12px 0;"><span id="pdfLinkDisplay">-</span></td>
+                <td style="padding: 12px 0;"><button onclick="editPdfLink()" style="background: var(--forest-mid); color: white; border: none; padding: 5px 12px; border-radius: 20px; cursor: pointer;">Edit</button></td>
+             </tr>
+            <tr>
+                <td style="padding: 12px 0;"><strong>📁 File ZIP</strong></td>
+                <td style="padding: 12px 0;"><span id="zipDisplay">-</span></td>
+                <td style="padding: 12px 0;"></td>
+             </tr>
+        </table>
+    </div>
+    
+    <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem;">
+        <button onclick="copyAllData()" style="background: var(--gold); color: #3d2a00; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 700; cursor: pointer;">📋 Copy Semua Data ke Clipboard</button>
+        <button onclick="resetAllData()" style="background: #c0392b; color: white; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 700; cursor: pointer;">🔄 Reset Semua</button>
+    </div>
+</section>
+
+<script>
+    // Load semua data dari localStorage saat halaman dimuat
+    function loadAllData() {
+        const name = localStorage.getItem('studentName');
+        const nim = localStorage.getItem('studentNim');
+        const yt = localStorage.getItem('ytLink');
+        const pdf = localStorage.getItem('pdfLink');
+        
+        if (name) document.getElementById('displayName').innerHTML = name;
+        if (nim) document.getElementById('displayNim').innerHTML = nim;
+        
+        if (yt) {
+            document.getElementById('ytLinkDisplay').innerHTML = `<a href="${yt}" target="_blank" style="color: #1e5631;">${yt.length > 50 ? yt.substring(0, 50) + '...' : yt}</a>`;
+        } else {
+            document.getElementById('ytLinkDisplay').innerHTML = '<span style="color: #999;">Belum diisi</span>';
+        }
+        
+        if (pdf) {
+            document.getElementById('pdfLinkDisplay').innerHTML = `<a href="${pdf}" target="_blank" style="color: #1e5631;">${pdf.length > 50 ? pdf.substring(0, 50) + '...' : pdf}</a>`;
+        } else {
+            document.getElementById('pdfLinkDisplay').innerHTML = '<span style="color: #999;">Belum diisi</span>';
+        }
+        
+        // Update format ZIP
+        updateZipDisplay();
+    }
+    
+    function updateZipDisplay() {
+        const name = localStorage.getItem('studentName') || 'Nama';
+        const nim = localStorage.getItem('studentNim') || 'NIM';
+        const zipName = `${nim}_${name.replace(/\s/g, '')}_UTS_RPL.zip`;
+        document.getElementById('zipDisplay').innerHTML = `<span style="font-family: monospace;">${zipName}</span>`;
+    }
+    
+    // Edit Nama
+    function editName() {
+        const newName = prompt('Masukkan Nama Lengkap Anda:', localStorage.getItem('studentName') || '');
+        if (newName && newName.trim()) {
+            localStorage.setItem('studentName', newName.trim());
+            document.getElementById('displayName').innerHTML = newName.trim();
+            updateZipDisplay();
+            alert('Nama berhasil disimpan!');
+        }
+    }
+    
+    // Edit NIM
+    function editNim() {
+        const newNim = prompt('Masukkan NIM Anda:', localStorage.getItem('studentNim') || '');
+        if (newNim && newNim.trim()) {
+            localStorage.setItem('studentNim', newNim.trim());
+            document.getElementById('displayNim').innerHTML = newNim.trim();
+            updateZipDisplay();
+            alert('NIM berhasil disimpan!');
+        }
+    }
+    
+    // Edit Link YouTube
+    function editYtLink() {
+        const newLink = prompt('Masukkan Link Video YouTube (Public):', localStorage.getItem('ytLink') || '');
+        if (newLink && newLink.trim()) {
+            localStorage.setItem('ytLink', newLink.trim());
+            document.getElementById('ytLinkDisplay').innerHTML = `<a href="${newLink.trim()}" target="_blank" style="color: #1e5631;">${newLink.trim().length > 50 ? newLink.trim().substring(0, 50) + '...' : newLink.trim()}</a>`;
+            alert('Link YouTube berhasil disimpan!');
+        }
+    }
+    
+    // Edit Link PDF Dokumentasi
+    function editPdfLink() {
+        const newLink = prompt('Masukkan Link PDF Dokumentasi (Google Drive):', localStorage.getItem('pdfLink') || '');
+        if (newLink && newLink.trim()) {
+            localStorage.setItem('pdfLink', newLink.trim());
+            document.getElementById('pdfLinkDisplay').innerHTML = `<a href="${newLink.trim()}" target="_blank" style="color: #1e5631;">${newLink.trim().length > 50 ? newLink.trim().substring(0, 50) + '...' : newLink.trim()}</a>`;
+            alert('Link PDF Dokumentasi berhasil disimpan!');
+        }
+    }
+    
+    // Copy semua data ke clipboard
+    function copyAllData() {
+        const name = localStorage.getItem('studentName') || '-';
+        const nim = localStorage.getItem('studentNim') || '-';
+        const yt = localStorage.getItem('ytLink') || '-';
+        const pdf = localStorage.getItem('pdfLink') || '-';
+        const zipName = `${nim}_${name.replace(/\s/g, '')}_UTS_RPL.zip`;
+        
+        const text = `========================================
+DATA PENGUMPULAN UTS RPL
+========================================
+Nama Lengkap: ${name}
+NIM: ${nim}
+Kelas: II / 2 Pagi A
+----------------------------------------
+Link Video YouTube: ${yt}
+Link Simulasi Diagram: ${diagram}
+Link PDF Dokumentasi: ${pdf}
+----------------------------------------
+File ZIP: ${zipName}
+========================================
+Tanggal: ${new Date().toLocaleDateString('id-ID')}
+========================================`;
+        
+        navigator.clipboard.writeText(text).then(() => {
+            alert('✅ Data berhasil disalin ke clipboard!');
+        }).catch(() => {
+            alert('❌ Gagal menyalin. Silakan copy manual.');
+        });
+    }
+    
+    // Reset semua data
+    function resetAllData() {
+        if (confirm('⚠️ Yakin ingin menghapus SEMUA data? Data tidak dapat dikembalikan!')) {
+            localStorage.removeItem('studentName');
+            localStorage.removeItem('studentNim');
+            localStorage.removeItem('ytLink');
+            localStorage.removeItem('pdfLink');
+            
+            document.getElementById('displayName').innerHTML = '[ISI NAMA ANDA]';
+            document.getElementById('displayNim').innerHTML = '[ISI NIM ANDA]';
+            document.getElementById('ytLinkDisplay').innerHTML = '<span style="color: #999;">Belum diisi</span>';
+            document.getElementById('pdfLinkDisplay').innerHTML = '<span style="color: #999;">Belum diisi</span>';
+            document.getElementById('zipDisplay').innerHTML = '<span style="color: #999;">-</span>';
+            
+            alert('✅ Semua data telah direset!');
+        }
+    }
+    
+    // Muat data saat halaman dimuat
+    loadAllData();
+</script>
+
+    <!-- ADMIN PANEL -->
+    <section id="adminSection" class="card">
+        <div class="admin-header">
+            <h3>⚙️ Panel Admin</h3>
+            <p>Kelola konten dan komentar pengunjung</p>
+        </div>
+        <div class="stats-row">
+            <div class="stat-box">
+                <div class="num" id="statTotal">0</div>
+                <div class="lbl">Total Komentar</div>
+            </div>
+            <div class="stat-box">
+                <div class="num" id="statToday">0</div>
+                <div class="lbl">Komentar Hari Ini</div>
+            </div>
+            <div class="stat-box">
+                <div class="num" id="statVisitors">0</div>
+                <div class="lbl">Total Pengunjung</div>
+            </div>
+        </div>
+        <h3 style="margin-bottom: 1rem; color: var(--forest-mid);">Semua Komentar</h3>
+        <div id="adminCommentsList"></div>
+    </section>
+
+    <!-- ========== UML SECTION LENGKAP ========== -->
+    <div id="umlContainer" class="uml-section">
+        <div class="uml-tab-bar">
+            <button class="uml-tab active" data-uml="usecase">01 · USE CASE</button>
+            <button class="uml-tab" data-uml="activity">02 · ACTIVITY</button>
+            <button class="uml-tab" data-uml="class">03 · CLASS</button>
+            <button class="uml-tab" data-uml="relation">04 · RELASI</button>
+        </div>
+
+        <!-- USE CASE - LENGKAP -->
+        <div id="uml-usecase" class="uml-content active">
+            <div class="uml-table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>Aktor</th><th>Use Case</th><th>Deskripsi</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td rowspan="3"><span class="pill pill-teal">Tamu</span></td><td>Melihat informasi destinasi</td><td>Dapat membaca konten tentang wisata tanpa harus login terlebih dahulu</td></tr>
+                        <tr><td>Melihat galeri foto</td><td>Dapat menelusuri foto-foto destinasi wisata yang tersedia</td></tr>
+                        <tr><td>Melihat peta lokasi</td><td>Dapat melihat peta Google Maps lokasi wisata secara interaktif</td></tr>
+                        <tr><td rowspan="4"><span class="pill pill-blue">Pengunjung</span></td><td>Login sebagai pengunjung</td><td>Mengisi nama lengkap dan asal kota untuk masuk ke sistem</td></tr>
+                        <tr><td>Melihat semua konten</td><td>Memiliki akses ke seluruh fitur yang tersedia untuk Tamu</td></tr>
+                        <tr><td>Menulis komentar</td><td>Dapat mengisi dan mengirim komentar/ulasan tentang destinasi</td></tr>
+                        <tr><td>Logout</td><td>Keluar dari sesi aktif dan kembali ke halaman login</td></tr>
+                        <tr><td rowspan="5"><span class="pill pill-amber">Admin</span></td><td>Login sebagai admin</td><td>Menggunakan username & password khusus admin untuk verifikasi</td></tr>
+                        <tr><td>Semua akses Pengunjung</td><td>Mewarisi seluruh use case yang dimiliki oleh Pengunjung</td></tr>
+                        <tr><td>Menghapus komentar</td><td>Dapat menghapus komentar manapun yang ada di dalam sistem</td></tr>
+                        <tr><td>Melihat panel admin</td><td>Mengakses statistik total komentar dan jumlah pengunjung</td></tr>
+                        <tr><td>Logout</td><td>Keluar dari sesi admin dengan konfirmasi</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="legend">
+                <span class="legend-label">Aktor :</span>
+                <span class="pill pill-teal">Tamu</span>
+                <span class="pill pill-blue">Pengunjung</span>
+                <span class="pill pill-amber">Admin</span>
+            </div>
+        </div>
+
+        <!-- ACTIVITY - LENGKAP -->
+        <div id="uml-activity" class="uml-content">
+            <div class="uml-table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>No</th><th>Aktivitas</th><th>Aktor</th><th>Keterangan</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="no-cell">01</td><td>Buka website</td><td><span class="pill pill-teal">Sistem</span></td><td>Auth overlay muncul secara otomatis saat halaman pertama kali dibuka</td></tr>
+                        <tr><td class="no-cell">02</td><td>Pilih jenis masuk</td><td><span class="pill pill-blue">Pengguna</span></td><td>Memilih antara tab Pengunjung, Admin, atau klik "Lanjut sebagai Tamu"</td></tr>
+                        <tr><td class="no-cell">03</td><td>Isi form Pengunjung</td><td><span class="pill pill-blue">Pengunjung</span></td><td>Memasukkan nama lengkap (min. 2 karakter) dan asal kota</td></tr>
+                        <tr><td class="no-cell">04</td><td>Validasi input form</td><td><span class="pill pill-teal">Sistem</span></td><td>Cek nama minimal 2 karakter dan kolom kota tidak boleh kosong</td></tr>
+                        <tr><td class="no-cell">05</td><td>Input tidak valid</td><td><span class="pill pill-teal">Sistem</span></td><td>Tampilkan pesan error di bawah field yang tidak valid, proses berhenti</td></tr>
+                        <tr><td class="no-cell">06</td><td>Isi form Admin</td><td><span class="pill pill-amber">Admin</span></td><td>Memasukkan username dan password, tekan Enter atau klik tombol masuk</td></tr>
+                        <tr><td class="no-cell">07</td><td>Verifikasi kredensial</td><td><span class="pill pill-teal">Sistem</span></td><td>Cek username = "admin" dan password = "admin123", tampilkan loading</td></tr>
+                        <tr><td class="no-cell">08</td><td>Masuk sebagai Tamu</td><td><span class="pill pill-blue">Pengguna</span></td><td>Langsung masuk tanpa mengisi data apapun, hanya akses baca</td></tr>
+                        <tr><td class="no-cell">09</td><td>Tampilkan halaman utama</td><td><span class="pill pill-teal">Sistem</span></td><td>Auth overlay tertutup, konten lengkap website ditampilkan kepada pengguna</td></tr>
+                        <tr><td class="no-cell">10</td><td>Jelajah konten</td><td><span class="pill pill-blue">Pengguna</span></td><td>Membaca informasi destinasi, melihat galeri foto, dan peta lokasi</td></tr>
+                        <tr><td class="no-cell">11</td><td>Tulis & kirim komentar</td><td><span class="pill pill-blue">Pengunjung</span></td><td>Hanya tersedia jika login sebagai Pengunjung atau Admin, bukan Tamu</td></tr>
+                        <tr><td class="no-cell">12</td><td>Simpan komentar</td><td><span class="pill pill-teal">Sistem</span></td><td>Komentar ditambahkan ke array dan disimpan ke localStorage browser</td></tr>
+                        <tr><td class="no-cell">13</td><td>Akses panel admin</td><td><span class="pill pill-amber">Admin</span></td><td>Klik menu Admin di navigasi, tampilkan statistik dan daftar semua komentar</td></tr>
+                        <tr><td class="no-cell">14</td><td>Hapus komentar</td><td><span class="pill pill-amber">Admin</span></td><td>Konfirmasi dialog muncul, setelah disetujui data dihapus dari localStorage</td></tr>
+                        <tr><td class="no-cell">15</td><td>Logout</td><td><span class="pill pill-blue">Pengguna</span></td><td>Konfirmasi keluar, sesi dihapus, kembali ke Auth overlay dari awal</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CLASS - LENGKAP -->
+        <div id="uml-class" class="uml-content">
+            <div class="uml-table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>Class</th><th>Atribut</th><th>Method</th><th>Relasi</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><span class="pill pill-blue">User</span></td>
+                            <td>
+                                <div class="attr-block">
+                                    <div><span class="attr-name">name</span> : <span class="attr-type">string</span></div>
+                                    <div><span class="attr-name">city</span> : <span class="attr-type">string</span></div>
+                                    <div><span class="attr-name">role</span> : <span class="attr-type">enum</span></div>
+                                    <div style="padding-left:1rem; font-size:0.68rem;">visitor | admin | guest</div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="method-block">
+                                    <div>login()</div>
+                                    <div>logout()</div>
+                                </div>
+                            </td>
+                            <td class="td-mono">→ uses AuthController<br>→ 1 : * Comment</td>
+                        </tr>
+                        <tr><td><span class="pill pill-purple">Comment</span></td>
+                            <td>
+                                <div class="attr-block">
+                                    <div><span class="attr-name">id</span> : <span class="attr-type">number</span></div>
+                                    <div><span class="attr-name">name</span> : <span class="attr-type">string</span></div>
+                                    <div><span class="attr-name">city</span> : <span class="attr-type">string</span></div>
+                                    <div><span class="attr-name">role</span> : <span class="attr-type">string</span></div>
+                                    <div><span class="attr-name">message</span> : <span class="attr-type">string</span></div>
+                                    <div><span class="attr-name">date</span> : <span class="attr-type">string</span></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="method-block">
+                                    <div>create()</div>
+                                    <div>delete()</div>
+                                </div>
+                            </td>
+                            <td class="td-mono">→ owned by User<br>→ stored in CommentStorage</td>
+                        </tr>
+                        <tr><td><span class="pill pill-teal">CommentStorage</span></td>
+                            <td>
+                                <div class="attr-block">
+                                    <div><span class="attr-name">comments</span> : <span class="attr-type">Comment[]</span></div>
+                                    <div><span class="attr-name">visitorCount</span> : <span class="attr-type">number</span></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="method-block">
+                                    <div>save()</div>
+                                    <div>load()</div>
+                                    <div>getAll()</div>
+                                    <div>getToday()</div>
+                                </div>
+                            </td>
+                            <td class="td-mono">→ stores Comment<br>→ read by AdminPanel</td>
+                        </tr>
+                        <tr><td><span class="pill pill-coral">AuthController</span></td>
+                            <td><div class="attr-block" style="font-style:italic;">—</div></td>
+                            <td>
+                                <div class="method-block">
+                                    <div>loginVisitor()</div>
+                                    <div>loginAdmin()</div>
+                                    <div>loginGuest()</div>
+                                    <div>validateCredentials()</div>
+                                </div>
+                            </td>
+                            <td class="td-mono">→ used by User<br>→ controls role access</td>
+                        </tr>
+                        <tr><td><span class="pill pill-amber">AdminPanel</span></td>
+                            <td>
+                                <div class="attr-block">
+                                    <div><span class="attr-name">totalComments</span> : <span class="attr-type">number</span></div>
+                                    <div><span class="attr-name">todayComments</span> : <span class="attr-type">number</span></div>
+                                    <div><span class="attr-name">totalVisitors</span> : <span class="attr-type">number</span></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="method-block">
+                                    <div>showStats()</div>
+                                    <div>deleteComment()</div>
+                                    <div>renderAdminList()</div>
+                                </div>
+                            </td>
+                            <td class="td-mono">→ reads CommentStorage<br>→ role = admin only</td>
+                        </tr>
+                    </tbody>
+                <table>
+            </div>
+            <div class="legend">
+                <span class="legend-label">Class :</span>
+                <span class="pill pill-blue">User</span>
+                <span class="pill pill-purple">Comment</span>
+                <span class="pill pill-teal">CommentStorage</span>
+                <span class="pill pill-coral">AuthController</span>
+                <span class="pill pill-amber">AdminPanel</span>
+            </div>
+        </div>
+
+        <!-- RELASI - LENGKAP -->
+        <div id="uml-relation" class="uml-content">
+            <div class="uml-table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>No</th><th>Dari</th><th>Tipe Relasi</th><th>Ke</th><th>Keterangan</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="no-cell">01</td><td><span class="pill pill-blue">User</span></td><td><span class="rel-type">Dependency</span></td><td><span class="pill pill-coral">AuthController</span></td><td>User bergantung pada AuthController untuk menjalankan proses login dan validasi</td></tr>
+                        <tr><td class="no-cell">02</td><td><span class="pill pill-blue">User</span></td><td><span class="rel-type">Association 1:*</span></td><td><span class="pill pill-purple">Comment</span></td><td>Satu user dapat memiliki dan membuat banyak komentar di dalam sistem</td></tr>
+                        <tr><td class="no-cell">03</td><td><span class="pill pill-purple">Comment</span></td><td><span class="rel-type">Aggregation</span></td><td><span class="pill pill-teal">CommentStorage</span></td><td>Objek Comment dikumpulkan dan dikelola oleh CommentStorage (localStorage)</td></tr>
+                        <tr><td class="no-cell">04</td><td><span class="pill pill-amber">AdminPanel</span></td><td><span class="rel-type">Dependency</span></td><td><span class="pill pill-teal">CommentStorage</span></td><td>AdminPanel membaca dan memanipulasi data komentar dari CommentStorage</td></tr>
+                        <tr><td class="no-cell">05</td><td><span class="pill pill-amber">AdminPanel</span></td><td><span class="rel-type">Constraint</span></td><td><span class="pill pill-blue">User</span></td><td>AdminPanel hanya dapat diakses jika User memiliki role = "admin"</td></tr>
+                        <tr><td class="no-cell">06</td><td><span class="pill pill-coral">AuthController</span></td><td><span class="rel-type">Realization</span></td><td><span class="pill pill-blue">User</span></td><td>AuthController merealisasikan interface login dan menetapkan role pada User</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="legend">
+                <span class="legend-label">Tipe :</span>
+                <span class="rel-type">Dependency</span>
+                <span class="rel-type">Association</span>
+                <span class="rel-type">Aggregation</span>
+                <span class="rel-type">Constraint</span>
+                <span class="rel-type">Realization</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>🏞️ Pemandian Alam Tanduk Benua - Menjaga Kearifan Lokal & Alam Lestari | © 2025 Dinas Pariwisata Karo</p>
+    <p style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.6;">*Website pengembangan ekowisata digital + Dokumentasi UML Lengkap</p>
+</footer>
+
+<script>
+    let currentUser = null;
+    let comments = JSON.parse(localStorage.getItem('tandukComments')) || [];
+    let visitorCount = parseInt(localStorage.getItem('tandukVisitors') || '0');
+
+    function switchTab(tab) {
+        document.getElementById('tabVisitor').classList.toggle('active', tab === 'visitor');
+        document.getElementById('tabAdmin').classList.toggle('active', tab === 'admin');
+        document.getElementById('formVisitor').classList.toggle('active', tab === 'visitor');
+        document.getElementById('formAdmin').classList.toggle('active', tab === 'admin');
+    }
+
+    function loginVisitor() {
+        const name = document.getElementById('vName').value.trim();
+        const city = document.getElementById('vCity').value.trim();
+        if (name.length < 2) { alert("Nama minimal 2 karakter"); return; }
+        if (!city) { alert("Asal kota harus diisi"); return; }
+        visitorCount++;
+        localStorage.setItem('tandukVisitors', visitorCount);
+        currentUser = { name, city, role: 'visitor' };
+        afterLogin();
+    }
+
+    function loginAdmin() {
+        const user = document.getElementById('aUser').value.trim();
+        const pass = document.getElementById('aPass').value;
+        if (user !== 'admin' || pass !== 'admin123') { alert("Username atau password salah! (admin / admin123)"); return; }
+        currentUser = { name: 'Administrator', city: 'Sistem', role: 'admin' };
+        afterLogin();
+    }
+
+    function loginGuest() {
+        currentUser = { name: 'Tamu', city: '', role: 'guest' };
+        afterLogin();
+    }
+
+    function afterLogin() {
+        document.getElementById('authOverlay').style.display = 'none';
+        updateUIWebsite();
+    }
+
+    function logout() {
+        if (!confirm("Yakin ingin keluar?")) return;
+        currentUser = null;
+        document.getElementById('authOverlay').style.display = 'flex';
+        document.getElementById('adminSection').style.display = 'none';
+        updateUIWebsite();
+    }
+
+    function showAuthOverlayManual() {
+        document.getElementById('authOverlay').style.display = 'flex';
+    }
+
+    function updateUIWebsite() {
+        if (!currentUser) return;
+        const badgeDiv = document.getElementById('userBadge');
+        document.getElementById('badgeAvatar').innerText = currentUser.name.substring(0, 2).toUpperCase();
+        document.getElementById('badgeName').innerText = currentUser.role === 'admin' ? '⚙️ Admin' : (currentUser.role === 'guest' ? '👁️ Tamu' : `${currentUser.name} · ${currentUser.city}`);
+        badgeDiv.style.display = 'flex';
+        document.getElementById('adminNavItem').style.display = (currentUser.role === 'admin') ? 'list-item' : 'none';
+        
+        const loginPrompt = document.getElementById('loginPrompt');
+        const actualForm = document.getElementById('actualCommentForm');
+        if (currentUser.role === 'guest') {
+            loginPrompt.style.display = 'block';    
+            actualForm.style.display = 'none';
+        } else {
+            loginPrompt.style.display = 'none';
+            actualForm.style.display = 'block';
+            document.getElementById('commentName').value = currentUser.name;
+        }
+        renderComments();
+        if (currentUser.role === 'admin') updateAdminStats();
+    }
+
+    // ========== COMMENTS ==========
+    function renderComments() {
+        const container = document.getElementById('commentsList');
+        if (comments.length === 0) {
+            container.innerHTML = '<p style="color: var(--muted);">✨ Belum ada komentar. Jadi yang pertama memberi kesan!</p>';
+            return;
+        }
+        container.innerHTML = comments.map((c, idx) => {
+            const initials = c.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+            const canDelete = currentUser && currentUser.role === 'admin';
+            return `
+                <div class="comment-item" id="cmt-${idx}">
+                    ${canDelete ? `<button class="btn-delete" onclick="deleteComment(${idx})">🗑 Hapus</button>` : ''}
+                    <div class="comment-meta">
+                        <div class="comment-avatar">${initials}</div>
+                        <span style="font-weight: 700;">${escapeHtml(c.name)}</span>
+                        ${c.city ? `<span style="font-size: 0.78rem; color: var(--muted);">📍 ${escapeHtml(c.city)}</span>` : ''}
+                        <span style="font-size: 0.7rem; color: var(--muted);">${c.date}</span>
+                    </div>
+                    <p style="font-size: 0.9rem;">${escapeHtml(c.message)}</p>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function submitComment() {
+        if (!currentUser || currentUser.role === 'guest') return;
+        const msg = document.getElementById('commentMsg').value.trim();
+        if (!msg) { alert("Tulis komentar terlebih dahulu!"); return; }
+        comments.unshift({
+            id: Date.now(),
+            name: currentUser.name,
+            city: currentUser.city || '',
+            role: currentUser.role,
+            message: msg,
+            date: new Date().toLocaleString('id-ID')
+        });
+        localStorage.setItem('tandukComments', JSON.stringify(comments));
+        document.getElementById('commentMsg').value = '';
+        renderComments();
+        if (currentUser.role === 'admin') updateAdminStats();
+        alert("Terima kasih atas komentarnya! 🌿");
+    }
+
+    function deleteComment(index) {
+        if (!currentUser || currentUser.role !== 'admin') return;
+        if (!confirm("Hapus komentar ini?")) return;
+        comments.splice(index, 1);
+        localStorage.setItem('tandukComments', JSON.stringify(comments));
+        renderComments();
+        updateAdminStats();
+    }
+
+    // ========== ADMIN ==========
+    function showAdminPanel() {
+        document.getElementById('adminSection').style.display = 'block';
+        updateAdminStats();
+        document.getElementById('adminSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function updateAdminStats() {
+        document.getElementById('statTotal').innerText = comments.length;
+        const today = new Date().toLocaleDateString('id-ID');
+        const todayCount = comments.filter(c => c.date.startsWith(today)).length;
+        document.getElementById('statToday').innerText = todayCount;
+        document.getElementById('statVisitors').innerText = visitorCount;
+        
+        const adminList = document.getElementById('adminCommentsList');
+        if (comments.length === 0) {
+            adminList.innerHTML = '<p style="color: var(--muted);">Tidak ada komentar.</p>';
+            return;
+        }
+        adminList.innerHTML = comments.map((c, idx) => `
+            <div class="comment-item" style="background: #fff8e6; border: 1px solid #f0d980;">
+                <button class="btn-delete" onclick="deleteComment(${idx})">🗑 Hapus</button>
+                <div class="comment-meta">
+                    <div class="comment-avatar" style="background: #7a4f00;">${c.name.substring(0,2).toUpperCase()}</div>
+                    <span style="font-weight: 700;">${escapeHtml(c.name)}</span>
+                    ${c.city ? `<span style="font-size: 0.78rem;">📍 ${escapeHtml(c.city)}</span>` : ''}
+                    <span style="font-size: 0.75rem; color: var(--muted);">${c.date}</span>
+                </div>
+                <p>${escapeHtml(c.message)}</p>
+            </div>
+        `).join('');
+    }
+
+    // ========== HELPER ==========
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    function scrollToSection(id) {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ========== UML TOGGLE ==========
+    const umlContainer = document.getElementById('umlContainer');
+    const umlNavBtn = document.getElementById('umlNavBtn');
+    let umlVisible = false;
+
+    function toggleUML() {
+        if (umlVisible) {
+            umlContainer.style.display = 'none';
+            umlVisible = false;
+        } else {
+            umlContainer.style.display = 'block';
+            umlVisible = true;
+            setTimeout(() => { umlContainer.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
+        }
+    }
+
+    umlNavBtn.addEventListener('click', toggleUML);
+
+    // ========== UML TAB SWITCHER ==========
+    const umlTabs = document.querySelectorAll('.uml-tab');
+    const umlContents = {
+        usecase: document.getElementById('uml-usecase'),
+        activity: document.getElementById('uml-activity'),
+        class: document.getElementById('uml-class'),
+        relation: document.getElementById('uml-relation')
+    };
+
+    umlTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const target = tab.getAttribute('data-uml');
+            umlTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            Object.values(umlContents).forEach(c => c.classList.remove('active'));
+            if (umlContents[target]) umlContents[target].classList.add('active');
+        });
+    });
+
+    // Initial render
+    renderComments();
+</script>
+</body>
+</html>
